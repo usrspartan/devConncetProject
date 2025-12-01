@@ -1,58 +1,38 @@
 const express = require('express');
-
 const app = express(); //creating an instance of a expressjs application
+// const {adminAuth, userAuth} = require("./middlewares/auth");
+const connect = require("./config/database");
+const User = require('./models/user')
+//writing APIs 
+//signup api
 
-const {adminAuth, userAuth} = require("./middlewares/auth");
+app.post('/signup',async(req,res)=>{
+    const user = new User({
+        firstName: 'MS',
+        lastName: 'Dhoni',
+        emailId:'mahendra@dhoni.com',
+        password:'dhoni@123'
+    });
 
-// app.use("/test", (req,res)=>{
-//     res.send("Hello from the server");  //Request handler function
-// })
-
-app.use("/admin",adminAuth,
-(req,res)=>{
-    res.send("Admin here");
-}
-)
-
-app.get("/user",userAuth,
-    (req,res,next)=>{
-    console.log("Entered get");
-    next();
-    res.send({firstName:"Anupam", lastName:"Mishra"});
+    try {
+        await user.save();
+        res.send("User added successfully");        
+    } catch (error) {
+        res.status(400).send("Error sending user");
+    }
 })
 
-app.post("/user", (req,res)=>{
-    console.log("Data posted successfully");
-    res.send("User details updated");
+
+connect().then(
+    ()=>{
+        console.log("Database connection successful");
+
+        app.listen(3000, ()=>{
+        console.log("Server started successfully at port 3000");
+    });
 })
-
-app.delete("/user", (req,res)=>{
-    console.log("Deletion activated");
-    res.send("Item deleted successfully");
-})
-
-app.put("/user",(req,res) => {
-    res.send("User details updated using put");
-})
-
-app.patch("/user",(req,res)=>{
-    res.send("User details updated using patch");
-})
-
-app.get("/user",(req,res)=>{
-    console.log("Query part:: ", req.query);
-
-    res.send("Query::",req.query);
-    
-})
-
-app.get("/user/:userId",(req,res)=>{
-    console.log("Params part:: ", req.params);   
-
-    res.send("Params:",req.params);
-})
-
-app.listen(3000, ()=>{
-    console.log("Server started successfully at port 3000");
-    
+.catch((err)=>{
+    console.log("Something went wrong in connecting to the database");
 });
+
+
