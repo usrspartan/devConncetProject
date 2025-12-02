@@ -5,23 +5,21 @@ const connect = require("./config/database");
 const User = require('./models/user')
 //writing APIs 
 //signup api
+app.use(express.json());
 
 app.post('/signup',async(req,res)=>{
-    const user = new User({
-        firstName: 'MS',
-        lastName: 'Dhoni',
-        emailId:'mahendra@dhoni.com',
-        password:'dhoni@123'
-    });
+    
+    console.log(req.body);
+    
+    const user = new User(req.body);
 
     try {
         await user.save();
         res.send("User added successfully");        
     } catch (error) {
-        res.status(400).send("Error sending user");
+        res.status(400).send("Error sending user",error.message);
     }
-})
-
+});
 
 connect().then(
     ()=>{
@@ -34,5 +32,3 @@ connect().then(
 .catch((err)=>{
     console.log("Something went wrong in connecting to the database");
 });
-
-
