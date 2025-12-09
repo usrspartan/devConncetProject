@@ -9,7 +9,7 @@ const adminAuth = (req,res,next)=>{
         console.log("Admin Authorization successful");
     }
     else
-        res.sendStatus(401)
+        res.sendStatus(401);
 }
 
 //user authorization
